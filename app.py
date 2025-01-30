@@ -1,29 +1,23 @@
-import streamlit as st
-from streamlit_webrtc import webrtc_streamer
 import cv2
-import av #strealing video library
+import streamlit as st
+import numpy as np
 
-st.title('Streamlit App Test')
-st.write('Gray Scale -> Color')
+camera_index = 0
+cap = cv2.VideoCapture(camera_index)
 
-#Class
-class VideoProcessor:
+if not cap.isOpened():
+    st.error("Cannot open the camera. Check camera connections.")
+else:
+    stframe = st.empty()
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            st.warning("Could not retrieve frame.")
+            break
 
-    def __init__(self) -> None:
-        self.test_state = None
+        # BGR to RGB
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    def recv(self,frame):
+        stframe.image(frame_rgb)
 
-        img = frame.to_ndarray(format = 'bgr24')
-        if self.test_state == True:
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-            img = av.VideoFrame.from_ndarray(img, format='gray')
-        else:
-            img = av.VideoFrame.from_ndarray(img, format='bgr24')
-
-        return img
-
-ctx = webrtc_streamer(key='example', video_processor_factory=VideoProcessor)
-
-if ctx.video_processor:
-    ctx.video_processor.test_state = st.checkbox('Gray Scale -> Color ')
+    cap.release()
