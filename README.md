@@ -1,0 +1,4 @@
+- Video Processing running on WEB-RTC
+- But not working on Cloud, Local only.
+- Possible to try filters written in Numpy in real time
+- There are multiple samples of filters, but they cannot be selected by Streamlit's Interface.
